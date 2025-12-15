@@ -32,13 +32,6 @@ dependencies:
       - snapshots
       - csi-driver
 
-  - role: kubernetes-apps/metallb
-    when:
-      - metallb_enabled
-      - inventory_hostname == groups['kube_control_plane'][0]
-    tags:
-      - metallb
-
   - role: kubernetes-apps/scheduler_plugins
     when:
       - scheduler_plugins_enabled

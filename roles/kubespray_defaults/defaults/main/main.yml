@@ -413,8 +413,6 @@ metrics_server_enabled: false
 enable_network_policy: true
 csi_snapshot_controller_enabled: false
 ingress_nginx_enabled: false
-metallb_enabled: false
-metallb_speaker_enabled: "{{ metallb_enabled }}"
 gateway_api_enabled: false
 prometheus_operator_crds_enabled: false
 
