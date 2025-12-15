@@ -22,14 +22,12 @@
     - cri-dockerd.socket
     - calico-node.service
     - containerd.service.d/http-proxy.conf
-    - crio.service.d/http-proxy.conf
     - k8s-certs-renew.service
     - k8s-certs-renew.timer
   register: services_removed
   tags:
     - services
     - containerd
-    - crio
 
 - name: Reset | Remove Docker
   include_role:
@@ -61,12 +59,11 @@
   until: remove_all_cri_containers.rc == 0
   delay: 5
   tags:
-    - crio
     - containerd
   when:
     - crictl.stat.exists
-    - container_manager in ["crio", "containerd"]
-    - ansible_facts.services['containerd.service'] is defined or ansible_facts.services['cri-o.service'] is defined
+    - container_manager in ["containerd"]
+    - ansible_facts.services['containerd.service'] is defined
   ignore_errors: true  # noqa ignore-errors
 
 - name: Reset | force remove all cri containers
@@ -76,29 +73,13 @@
   until: remove_all_cri_containers.rc == 0
   delay: 5
   tags:
-    - crio
     - containerd
   when:
     - crictl.stat.exists
-    - container_manager in ["crio", "containerd"]
+    - container_manager in ["containerd"]
     - deploy_container_engine
-    - ansible_facts.services['containerd.service'] is defined or ansible_facts.services['cri-o.service'] is defined
+    - ansible_facts.services['containerd.service'] is defined
   ignore_errors: true  # noqa ignore-errors
-
-- name: Reset | stop and disable crio service
-  service:
-    name: crio
-    state: stopped
-    enabled: false
-  failed_when: false
-  tags: [ crio ]
-  when: container_manager == "crio"
-
-- name: Reset | forcefully wipe CRI-O's container and image storage
-  command: "crio wipe -f"
-  failed_when: false
-  tags: [ crio ]
-  when: container_manager == "crio"
 
 - name: Reset | stop all cri pods
   shell: "set -o pipefail && {{ bin_dir }}/crictl pods -q | xargs -r {{ bin_dir }}/crictl -t 60s stopp"
@@ -112,7 +93,7 @@
   when:
     - crictl.stat.exists
     - container_manager == "containerd"
-    - ansible_facts.services['containerd.service'] is defined or ansible_facts.services['cri-o.service'] is defined
+    - ansible_facts.services['containerd.service'] is defined
   ignore_errors: true  # noqa ignore-errors
 
 - name: Reset | force remove all cri pods
@@ -127,7 +108,7 @@
       when:
         - crictl.stat.exists
         - container_manager == "containerd"
-        - ansible_facts.services['containerd.service'] is defined or ansible_facts.services['cri-o.service'] is defined
+        - ansible_facts.services['containerd.service'] is defined
 
   rescue:
     - name: Reset | force remove all cri pods (rescue)
@@ -334,8 +315,6 @@
     - "{{ etcd_config_dir }}"
     - /var/log/calico
     - /var/log/openvswitch
-    - /var/log/ovn
-    - /var/log/kube-ovn
     - /var/log/containers
     - /etc/cni
     - /etc/nerdctl
@@ -349,8 +328,6 @@
     - /opt/cni
     - /etc/dhcp/dhclient.d/zdnsupdate.sh
     - /etc/dhcp/dhclient-exit-hooks.d/zdnsupdate
-    - /run/flannel
-    - /etc/flannel
     - /run/kubernetes
     - /usr/local/share/ca-certificates/etcd-ca.crt
     - /usr/local/share/ca-certificates/kube-ca.crt
@@ -380,7 +357,6 @@
     - /var/lib/cni
     - /etc/openvswitch
     - /run/openvswitch
-    - /var/lib/kube-router
     - /var/lib/calico
     - /etc/cilium
     - /run/calico
@@ -389,7 +365,6 @@
     - /etc/bash_completion.d/nerdctl
     - /etc/modules-load.d/kube_proxy-ipvs.conf
     - /etc/modules-load.d/kubespray-br_netfilter.conf
-    - /etc/modules-load.d/kubespray-kata-containers.conf
     - /usr/libexec/kubernetes
     - /etc/origin/openvswitch
     - /etc/origin/ovn
@@ -437,7 +412,7 @@
     name: "network_plugin/{{ kube_network_plugin }}"
     tasks_from: reset
   when:
-    - kube_network_plugin in ['flannel', 'cilium', 'kube-router', 'calico']
+    - kube_network_plugin in ['cilium', 'calico']
   tags:
     - network
 

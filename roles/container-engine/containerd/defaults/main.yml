@@ -21,11 +21,6 @@ containerd_runc_runtime:
     BinaryName: "{{ bin_dir }}/runc"
 
 containerd_additional_runtimes: []
-# Example for Kata Containers as additional runtime:
-#  - name: kata
-#    type: "io.containerd.kata.v2"
-#    engine: ""
-#    root: ""
 
 containerd_base_runtime_spec_rlimit_nofile: 65535
 

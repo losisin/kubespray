@@ -62,14 +62,6 @@ oom_score = {{ containerd_oom_score }}
 {% endif %}
 {% endfor %}
 {% endfor %}
-{% if kata_containers_enabled %}
-        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.kata-qemu]
-          runtime_type = "io.containerd.kata-qemu.v2"
-{% endif %}
-{% if gvisor_enabled %}
-        [plugins."io.containerd.grpc.v1.cri".containerd.runtimes.runsc]
-          runtime_type = "io.containerd.runsc.v1"
-{% endif %}
     [plugins."io.containerd.grpc.v1.cri".registry]
       config_path = "{{ containerd_cfg_dir }}/certs.d"
 {% for registry in containerd_registry_auth if registry['registry'] is defined %}

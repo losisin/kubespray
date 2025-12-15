@@ -33,12 +33,6 @@
     image_load_command: "{{ bin_dir }}/nerdctl -n k8s.io image load < {{ image_path_final }}"
   when: container_manager == 'containerd'
 
-- name: Set image save/load command for crio
-  set_fact:
-    image_save_command: "{{ bin_dir }}/skopeo copy containers-storage:{{ image_reponame }} docker-archive:{{ image_path_final }} 2>/dev/null"
-    image_load_command: "{{ bin_dir }}/skopeo copy docker-archive:{{ image_path_final }} containers-storage:{{ image_reponame }} 2>/dev/null"
-  when: container_manager == 'crio'
-
 - name: Set image save/load command for docker on localhost
   set_fact:
     image_save_command_on_localhost: "{{ docker_bin_dir }}/docker save {{ image_reponame }} | gzip -{{ download_compress }} > {{ image_path_cached }}"
@@ -48,8 +42,3 @@
   set_fact:
     image_save_command_on_localhost: "{{ containerd_bin_dir }}/ctr -n k8s.io image export --platform linux/{{ image_arch }} {{ image_path_cached }} {{ image_reponame }}"
   when: container_manager_on_localhost == 'containerd'
-
-- name: Set image save/load command for crio on localhost
-  set_fact:
-    image_save_command_on_localhost: "{{ bin_dir }}/skopeo copy containers-storage:{{ image_reponame }} docker-archive:{{ image_path_final }} 2>/dev/null"
-  when: container_manager_on_localhost == 'crio'

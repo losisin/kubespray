@@ -20,32 +20,6 @@
   listen: Restart etcd
   when: etcd_cluster_is_healthy.rc == 0
 
-- name: Stat etcd v2 data directory
-  stat:
-    path: "{{ etcd_data_dir }}/member"
-    get_attributes: false
-    get_checksum: false
-    get_mime: false
-  register: etcd_data_dir_member
-  listen: Restart etcd
-  when: etcd_cluster_is_healthy.rc == 0
-
-- name: Backup etcd v2 data
-  when:
-    - etcd_data_dir_member.stat.exists
-    - etcd_cluster_is_healthy.rc == 0
-  command: >-
-    {{ bin_dir }}/etcdctl backup
-      --data-dir {{ etcd_data_dir }}
-      --backup-dir {{ etcd_backup_directory }}
-  environment:
-    ETCDCTL_API: "2"
-  retries: 3
-  register: backup_v2_command
-  until: backup_v2_command.rc == 0
-  delay: "{{ retry_stagger | random + 3 }}"
-  listen: Restart etcd
-
 - name: Backup etcd v3 data
   command: >-
     {{ bin_dir }}/etcdctl

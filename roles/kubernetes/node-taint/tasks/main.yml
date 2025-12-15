@@ -4,14 +4,6 @@
     role_node_taints: []
     inventory_node_taints: []
 
-- name: Node taint for nvidia GPU nodes
-  set_fact:
-    role_node_taints: "{{ role_node_taints + ['nvidia.com/gpu=:NoSchedule'] }}"
-  when:
-    - nvidia_gpu_nodes is defined
-    - nvidia_accelerator_enabled | bool
-    - inventory_hostname in nvidia_gpu_nodes
-
 - name: Populate inventory node taint
   set_fact:
     inventory_node_taints: "{{ inventory_node_taints + ['%s' | format(item)] }}"

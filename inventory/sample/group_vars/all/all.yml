@@ -37,20 +37,8 @@ loadbalancer_apiserver_healthcheck_port: 8081
 
 ## Upstream dns servers
 # upstream_dns_servers:
+#   - 1.1.1.1
 #   - 8.8.8.8
-#   - 8.8.4.4
-
-## There are some changes specific to the cloud providers
-## for instance we need to encapsulate packets with some network plugins
-## If set the possible values only 'external' after K8s v1.31.
-# cloud_provider:
-
-# External Cloud Controller Manager (Formerly known as cloud provider)
-# cloud_provider must be "external", otherwise this setting is invalid.
-# Supported external cloud controllers are: 'openstack', 'vsphere', 'oci', 'huaweicloud', 'hcloud' and 'manual'
-# 'manual' does not install the cloud controller manager used by Kubespray.
-# If you fill in a value other than the above, the check will fail.
-# external_cloud_provider:
 
 ## Set these proxy values in order to update package manager and docker daemon to use proxies and custom CA for https_proxy if needed
 # http_proxy: ""
@@ -98,17 +86,6 @@ no_proxy_exclude_workers: false
 # Set false if you want to deploy container engine manually.
 # deploy_container_engine: true
 
-## Red Hat Enterprise Linux subscription registration
-## Add either RHEL subscription Username/Password or Organization ID/Activation Key combination
-## Update RHEL subscription purpose usage, role and SLA if necessary
-# rh_subscription_username: ""
-# rh_subscription_password: ""
-# rh_subscription_org_id: ""
-# rh_subscription_activation_key: ""
-# rh_subscription_usage: "Development"
-# rh_subscription_role: "Red Hat Enterprise Server"
-# rh_subscription_sla: "Self-Support"
-
 ## Check if access_ip responds to ping. Set false if your firewall blocks ICMP.
 # ping_access_ip: true
 
@@ -127,7 +104,8 @@ kube_webhook_token_auth_url_skip_tls_verify: false
 
 ## NTP Settings
 # Start the ntpd or chrony service and enable it at system boot.
-ntp_enabled: false
+ntp_enabled: true
+ntp_timezone: "Europe/Skopje"
 ntp_manage_config: false
 ntp_servers:
   - "0.pool.ntp.org iburst"

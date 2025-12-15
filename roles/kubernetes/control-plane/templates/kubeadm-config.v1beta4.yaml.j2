@@ -43,60 +43,14 @@ encryptionAlgorithm: {{ kube_asymmetric_encryption_algorithm }}
 certificateValidityPeriod: {{ kube_cert_validity_period }}
 caCertificateValidityPeriod: {{ kube_ca_cert_validity_period }}
 etcd:
-{% if etcd_deployment_type != "kubeadm" %}
   external:
-      endpoints:
+    endpoints:
 {% for endpoint in etcd_access_addresses.split(',') %}
-      - "{{ endpoint }}"
+    - "{{ endpoint }}"
 {% endfor %}
-      caFile: {{ etcd_cert_dir }}/{{ kube_etcd_cacert_file }}
-      certFile: {{ etcd_cert_dir }}/{{ kube_etcd_cert_file }}
-      keyFile: {{ etcd_cert_dir }}/{{ kube_etcd_key_file }}
-{% elif etcd_deployment_type == "kubeadm" %}
-  local:
-    imageRepository: "{{ etcd_image_repo | regex_replace("/etcd$","") }}"
-    imageTag: "{{ etcd_image_tag }}"
-    dataDir: "{{ etcd_data_dir }}"
-    extraArgs:
-    - name: metrics
-      value: {{ etcd_metrics }}
-    - name: election-timeout
-      value: "{{ etcd_election_timeout }}"
-    - name: heartbeat-interval
-      value: "{{ etcd_heartbeat_interval }}"
-    - name: auto-compaction-retention
-      value: "{{ etcd_compaction_retention }}"
-{% if etcd_listen_metrics_urls is defined %}
-    - name: listen-metrics-urls
-      value: "{{ etcd_listen_metrics_urls }}"
-{% endif %}
-    - name: snapshot-count
-      value: "{{ etcd_snapshot_count }}"
-    - name: quota-backend-bytes
-      value: "{{ etcd_quota_backend_bytes }}"
-    - name: max-request-bytes
-      value: "{{ etcd_max_request_bytes }}"
-    - name: log-level
-      value: "{{ etcd_log_level }}"
-{% for key, value in etcd_extra_vars.items() %}
-    - name: {{ key }}
-      value: "{{ value }}"
-{% endfor %}
-    serverCertSANs:
-{% for san in etcd_cert_alt_names %}
-      - "{{ san }}"
-{% endfor %}
-{% for san in etcd_cert_alt_ips %}
-      - "{{ san }}"
-{% endfor %}
-    peerCertSANs:
-{% for san in etcd_cert_alt_names %}
-      - "{{ san }}"
-{% endfor %}
-{% for san in etcd_cert_alt_ips %}
-      - "{{ san }}"
-{% endfor %}
-{% endif %}
+    caFile: {{ etcd_cert_dir }}/{{ kube_etcd_cacert_file }}
+    certFile: {{ etcd_cert_dir }}/{{ kube_etcd_cert_file }}
+    keyFile: {{ etcd_cert_dir }}/{{ kube_etcd_key_file }}
 dns:
 {% if 'addon/coredns' in kubeadm_init_phases_skip  %}
   disabled: true
@@ -106,7 +60,7 @@ dns:
 networking:
   dnsDomain: {{ dns_domain }}
   serviceSubnet: "{{ kube_service_subnets }}"
-{% if kube_network_plugin is defined and kube_network_plugin not in ["kube-ovn"] %}
+{% if kube_network_plugin is defined %}
   podSubnet: "{{ kube_pods_subnets }}"
 {% endif %}
 {% if kubeadm_feature_gates %}
@@ -351,7 +305,7 @@ controllerManager:
     value: "{{ kube_controller_node_monitor_grace_period }}"
   - name: node-monitor-period
     value: "{{ kube_controller_node_monitor_period }}"
-{% if kube_network_plugin is defined and kube_network_plugin not in ["kube-ovn"] %}
+{% if kube_network_plugin is defined %}
   - name: cluster-cidr
     value: "{{ kube_pods_subnets }}"
 {% endif %}
@@ -459,7 +413,7 @@ apply:
   kubernetesVersion: v{{ kube_version }}
   allowExperimentalUpgrades: true
   certificateRenewal: {{ kubeadm_upgrade_auto_cert_renewal | lower }}
-  etcdUpgrade: {{ (etcd_deployment_type == "kubeadm") | lower }}
+  etcdUpgrade: false
   forceUpgrade: true
 {% if kubeadm_ignore_preflight_errors | length > 0 %}
   ignorePreflightErrors:
@@ -481,7 +435,7 @@ apply:
 {% endfor %}
 node:
   certificateRenewal: {{ kubeadm_upgrade_auto_cert_renewal | lower }}
-  etcdUpgrade: {{ (etcd_deployment_type == "kubeadm") | lower }}
+  etcdUpgrade: false
 {% if kubeadm_ignore_preflight_errors | length > 0 %}
   ignorePreflightErrors:
 {% for ignore_error in kubeadm_ignore_preflight_errors %}
@@ -510,7 +464,7 @@ clientConnection:
   contentType: {{ kube_proxy_client_content_type }}
   kubeconfig: {{ kube_proxy_client_kubeconfig }}
   qps: {{ kube_proxy_client_qps }}
-{% if kube_network_plugin is defined and kube_network_plugin not in ["kube-ovn"] %}
+{% if kube_network_plugin is defined %}
 clusterCIDR: "{{ kube_pods_subnets }}"
 {% endif %}
 configSyncPeriod: {{ kube_proxy_config_sync_period }}

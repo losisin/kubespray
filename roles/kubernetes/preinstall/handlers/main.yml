@@ -18,9 +18,9 @@
     - Preinstall | kube-controller configured
     - Preinstall | kube-apiserver configured
     - Preinstall | restart kube-controller-manager docker
-    - Preinstall | restart kube-controller-manager crio/containerd
+    - Preinstall | restart kube-controller-manager containerd
     - Preinstall | restart kube-apiserver docker
-    - Preinstall | restart kube-apiserver crio/containerd
+    - Preinstall | restart kube-apiserver containerd
   when: not dns_early | bool
   listen:
     - Preinstall | propagate resolvconf to k8s components
@@ -61,7 +61,7 @@
     - kube_controller_set.stat.exists
   listen: Preinstall | propagate resolvconf to k8s components
 
-- name: Preinstall | restart kube-controller-manager crio/containerd
+- name: Preinstall | restart kube-controller-manager containerd
   shell: "set -o pipefail && {{ bin_dir }}/crictl pods --name kube-controller-manager* -q | xargs -I% --no-run-if-empty bash -c '{{ bin_dir }}/crictl stopp % && {{ bin_dir }}/crictl rmp %'"
   args:
     executable: /bin/bash
@@ -70,7 +70,7 @@
   delay: 1
   until: preinstall_restart_controller_manager.rc == 0
   when:
-    - container_manager in ['crio', 'containerd']
+    - container_manager in ['containerd']
     - ('kube_control_plane' in group_names)
     - dns_mode != 'none'
     - resolvconf_mode == 'host_resolvconf'
@@ -89,7 +89,7 @@
     - kube_apiserver_set.stat.exists
   listen: Preinstall | propagate resolvconf to k8s components
 
-- name: Preinstall | restart kube-apiserver crio/containerd
+- name: Preinstall | restart kube-apiserver containerd
   shell: "set -o pipefail && {{ bin_dir }}/crictl pods --name kube-apiserver* -q | xargs -I% --no-run-if-empty bash -c '{{ bin_dir }}/crictl stopp % && {{ bin_dir }}/crictl rmp %'"
   args:
     executable: /bin/bash
@@ -98,7 +98,7 @@
   until: preinstall_restart_apiserver.rc == 0
   delay: 1
   when:
-    - container_manager in ['crio', 'containerd']
+    - container_manager in ['containerd']
     - ('kube_control_plane' in group_names)
     - dns_mode != 'none'
     - resolvconf_mode == 'host_resolvconf'

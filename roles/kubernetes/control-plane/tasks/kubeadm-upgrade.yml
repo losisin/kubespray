@@ -12,7 +12,7 @@
     --certificate-renewal={{ kubeadm_upgrade_auto_cert_renewal }}
     --ignore-preflight-errors={{ kubeadm_ignore_preflight_errors | join(',') }}
     --allow-experimental-upgrades
-    --etcd-upgrade={{ (etcd_deployment_type == "kubeadm") | lower }}
+    --etcd-upgrade=false
     {% if kubeadm_patches | length > 0 %}--patches={{ kubeadm_patches_dir }}{% endif %}
     --force
     {%- else %}
@@ -34,7 +34,7 @@
     {%- if kubeadm_config_api_version == 'v1beta3' %}
     --certificate-renewal={{ kubeadm_upgrade_auto_cert_renewal }}
     --ignore-preflight-errors={{ kubeadm_ignore_preflight_errors | join(',') }}
-    --etcd-upgrade={{ (etcd_deployment_type == "kubeadm") | lower }}
+    --etcd-upgrade=false
     {% if kubeadm_patches | length > 0 %}--patches={{ kubeadm_patches_dir }}{% endif %}
     {%- else %}
     --config={{ kube_config_dir }}/kubeadm-config.yaml
@@ -65,12 +65,6 @@
   when:
   - inventory_hostname == first_kube_control_plane
   - ('addon/kube-proxy' not in kubeadm_init_phases_skip)
-
-- name: Rewrite kubeadm managed etcd static pod manifests with updated configmap
-  command: "{{ bin_dir }}/kubeadm init phase etcd local --config {{ kube_config_dir }}/kubeadm-config.yaml"
-  when:
-  - etcd_deployment_type == "kubeadm"
-  notify: Control plane | restart kubelet
 
 - name: Rewrite kubernetes control plane static pod manifests with updated configmap
   command: "{{ bin_dir }}/kubeadm init phase control-plane all --config {{ kube_config_dir }}/kubeadm-config.yaml"

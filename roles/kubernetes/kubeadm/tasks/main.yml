@@ -200,12 +200,3 @@
     - original_configmap_resource_version.stdout != new_configmap_resource_version.stdout
   tags:
     - kube-proxy
-
-- name: Extract etcd certs from control plane if using etcd kubeadm mode
-  include_tasks: kubeadm_etcd_node.yml
-  when:
-    - etcd_deployment_type == "kubeadm"
-    - inventory_hostname not in groups['kube_control_plane']
-    - kube_network_plugin in ["calico", "flannel", "cilium"] or cilium_deploy_additionally
-    - kube_network_plugin != "calico" or calico_datastore == "etcd"
-    - kube_network_plugin != "cilium" or cilium_identity_allocation_mode != 'crd'

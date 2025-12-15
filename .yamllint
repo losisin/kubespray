@@ -5,7 +5,6 @@ ignore: |
   .git/
   .github/
   # Generated file
-  tests/files/custom_cni/cilium.yaml
 # https://ansible.readthedocs.io/projects/lint/rules/yaml/
 rules:
   braces:

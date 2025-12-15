@@ -113,18 +113,14 @@ etcd_retries: 4
 #   - TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256
 #   - TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256
 
-# ETCD 3.5.x issue
-# https://groups.google.com/a/kubernetes.io/g/dev/c/B7gJs88XtQc/m/rSgNOzV2BwAJ?utm_medium=email&utm_source=footer
-etcd_experimental_initial_corrupt_check: true
-
 # Enable distributed tracing
-# https://etcd.io/docs/v3.5/op-guide/monitoring/#distributed-tracing
-etcd_experimental_enable_distributed_tracing: false
-etcd_experimental_distributed_tracing_sample_rate: 100 # Per million spans
-etcd_experimental_distributed_tracing_address: "localhost:4317"
-etcd_experimental_distributed_tracing_service_name: etcd
+# https://etcd.io/docs/v3.6/op-guide/monitoring/#distributed-tracing
+etcd_enable_distributed_tracing: false
+etcd_distributed_tracing_sample_rate: 100 # Per million spans
+etcd_distributed_tracing_address: "localhost:4317"
+etcd_distributed_tracing_service_name: etcd
 
 # The interval for etcd watch progress notify events
-etcd_experimental_watch_progress_notify_interval: 5s
+etcd_watch_progress_notify_interval: 5s
 
 etcd_log_level: info

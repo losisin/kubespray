@@ -12,10 +12,10 @@
   run_once: true
   when: not ignore_assert_errors
 
-- name: Stop if etcd group is empty in external etcd mode
+- name: Stop if etcd group is empty
   assert:
-    that: groups.get('etcd') or etcd_deployment_type == 'kubeadm'
-    fail_msg: "Group 'etcd' cannot be empty in external etcd mode"
+    that: groups.get('etcd')
+    fail_msg: "Group 'etcd' cannot be empty"
   run_once: true
   when:
     - not ignore_assert_errors
@@ -40,8 +40,6 @@
       - download_run_once | type_debug == 'bool'
       - deploy_netchecker | type_debug == 'bool'
       - download_always_pull | type_debug == 'bool'
-      - helm_enabled | type_debug == 'bool'
-      - openstack_lbaas_enabled | type_debug == 'bool'
   run_once: true
   when: not ignore_assert_errors
 
@@ -79,13 +77,6 @@
     that: cloud_provider == 'external'
   when:
     - cloud_provider
-    - not ignore_assert_errors
-
-- name: Check external_cloud_provider value
-  assert:
-    that: external_cloud_provider in ['hcloud', 'huaweicloud', 'oci', 'openstack', 'vsphere', 'manual']
-  when:
-    - cloud_provider == 'external'
     - not ignore_assert_errors
 
 - name: "Check that kube_service_addresses is a network range"
@@ -159,14 +150,13 @@
 - name: Stop if unsupported options selected
   assert:
     that:
-      - kube_network_plugin in ['calico', 'flannel', 'cloud', 'cilium', 'cni', 'kube-ovn', 'kube-router', 'macvlan', 'custom_cni', 'none']
+      - kube_network_plugin in ['calico', 'cloud', 'cilium', 'cni', 'none']
       - dns_mode in ['coredns', 'coredns_dual', 'manual', 'none']
       - kube_proxy_mode in ['iptables', 'ipvs', 'nftables']
       - cert_management in ['script', 'none']
       - resolvconf_mode in ['docker_dns', 'host_resolvconf', 'none']
-      - etcd_deployment_type in ['host', 'docker', 'kubeadm']
-      - etcd_deployment_type in ['host', 'kubeadm'] or container_manager == 'docker'
-      - container_manager in ['docker', 'crio', 'containerd']
+      - etcd_deployment_type == 'host'
+      - container_manager == 'containerd'
     msg: The selected choice is not supported
   run_once: true
 
@@ -181,18 +171,6 @@
     that: download_run_once
     msg: "download_localhost requires enable download_run_once"
   when: download_localhost
-
-- name: Stop if kata_containers_enabled is enabled when container_manager is docker
-  assert:
-    that: container_manager != 'docker'
-    msg: "kata_containers_enabled support only for containerd and crio-o. See https://github.com/kata-containers/documentation/blob/1.11.4/how-to/run-kata-with-k8s.md#install-a-cri-implementation for details"
-  when: kata_containers_enabled
-
-- name: Stop if gvisor_enabled is enabled when container_manager is not containerd
-  assert:
-    that: container_manager == 'containerd'
-    msg: "gvisor_enabled support only compatible with containerd. See https://github.com/kubernetes-sigs/kubespray/issues/7650 for details"
-  when: gvisor_enabled
 
 - name: Ensure minimum containerd version
   assert:
