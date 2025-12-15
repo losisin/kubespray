@@ -6,12 +6,6 @@
 # Helm deployment
 helm_enabled: false
 
-# Registry deployment
-registry_enabled: false
-# registry_namespace: kube-system
-# registry_storage_class: ""
-# registry_disk_size: "10Gi"
-
 # Metrics Server deployment
 metrics_server_enabled: true
 # metrics_server_container_port: 10250
