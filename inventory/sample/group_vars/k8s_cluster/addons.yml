@@ -1,11 +1,4 @@
 ---
-# Kubernetes dashboard
-# RBAC required. see docs/getting-started.md for access details.
-# dashboard_enabled: false
-
-# Helm deployment
-helm_enabled: false
-
 # Metrics Server deployment
 metrics_server_enabled: true
 # metrics_server_container_port: 10250

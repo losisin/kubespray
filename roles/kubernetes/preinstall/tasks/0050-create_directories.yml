@@ -75,11 +75,10 @@
     - "/etc/cni/net.d"
     - "/opt/cni/bin"
   when:
-    - kube_network_plugin in ["calico", "cilium"]
+    - kube_network_plugin in ["calico"]
     - ('k8s_cluster' in group_names)
   tags:
     - network
-    - cilium
     - calico
     - bootstrap_os
 

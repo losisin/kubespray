@@ -17,9 +17,7 @@
   notify:
     - Preinstall | kube-controller configured
     - Preinstall | kube-apiserver configured
-    - Preinstall | restart kube-controller-manager docker
     - Preinstall | restart kube-controller-manager containerd
-    - Preinstall | restart kube-apiserver docker
     - Preinstall | restart kube-apiserver containerd
   when: not dns_early | bool
   listen:
@@ -49,18 +47,6 @@
   when: ('kube_control_plane' in group_names) and dns_mode != 'none' and resolvconf_mode == 'host_resolvconf'
   listen: Preinstall | propagate resolvconf to k8s components
 
-- name: Preinstall | restart kube-controller-manager docker
-  shell: "set -o pipefail && {{ docker_bin_dir }}/docker ps -f name=k8s_POD_kube-controller-manager* -q | xargs --no-run-if-empty {{ docker_bin_dir }}/docker rm -f"
-  args:
-    executable: /bin/bash
-  when:
-    - container_manager == "docker"
-    - ('kube_control_plane' in group_names)
-    - dns_mode != 'none'
-    - resolvconf_mode == 'host_resolvconf'
-    - kube_controller_set.stat.exists
-  listen: Preinstall | propagate resolvconf to k8s components
-
 - name: Preinstall | restart kube-controller-manager containerd
   shell: "set -o pipefail && {{ bin_dir }}/crictl pods --name kube-controller-manager* -q | xargs -I% --no-run-if-empty bash -c '{{ bin_dir }}/crictl stopp % && {{ bin_dir }}/crictl rmp %'"
   args:
@@ -75,18 +61,6 @@
     - dns_mode != 'none'
     - resolvconf_mode == 'host_resolvconf'
     - kube_controller_set.stat.exists
-  listen: Preinstall | propagate resolvconf to k8s components
-
-- name: Preinstall | restart kube-apiserver docker
-  shell: "set -o pipefail && {{ docker_bin_dir }}/docker ps -f name=k8s_POD_kube-apiserver* -q | xargs --no-run-if-empty {{ docker_bin_dir }}/docker rm -f"
-  args:
-    executable: /bin/bash
-  when:
-    - container_manager == "docker"
-    - ('kube_control_plane' in group_names)
-    - dns_mode != 'none'
-    - resolvconf_mode == 'host_resolvconf'
-    - kube_apiserver_set.stat.exists
   listen: Preinstall | propagate resolvconf to k8s components
 
 - name: Preinstall | restart kube-apiserver containerd

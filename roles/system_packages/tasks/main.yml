@@ -15,14 +15,6 @@
     - ansible_pkg_mgr == 'zypper'
   tags: bootstrap_os
 
-- name: Remove legacy docker repo file
-  file:
-    path: "{{ yum_repo_dir }}/docker.repo"
-    state: absent
-  when:
-    - ansible_os_family == "RedHat"
-    - not is_fedora_coreos
-
 - name: Install epel-release on RHEL derivatives
   package:
     name: epel-release

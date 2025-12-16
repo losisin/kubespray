@@ -61,13 +61,6 @@
     - ping_access_ip
   changed_when: false
 
-- name: Stop if kernel version is too low for cilium
-  assert:
-    that: ansible_kernel.split('-')[0] is version('4.9.17', '>=')
-  when:
-    - kube_network_plugin == 'cilium' or cilium_deploy_additionally
-    - not ignore_assert_errors
-
 - name: Stop if kernel version is too low for nftables
   assert:
     that: ansible_kernel.split('-')[0] is version('5.13', '>=')

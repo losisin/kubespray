@@ -6,8 +6,6 @@
     enabled: false
   with_items:
     - kubelet.service
-    - cri-dockerd.service
-    - cri-dockerd.socket
   failed_when: false
   tags:
     - services
@@ -18,8 +16,6 @@
     state: absent
   with_items:
     - kubelet.service
-    - cri-dockerd.service
-    - cri-dockerd.socket
     - calico-node.service
     - containerd.service.d/http-proxy.conf
     - k8s-certs-renew.service
@@ -28,14 +24,6 @@
   tags:
     - services
     - containerd
-
-- name: Reset | Remove Docker
-  include_role:
-    name: container-engine/docker
-    tasks_from: reset
-  when: container_manager == 'docker'
-  tags:
-    - docker
 
 - name: Reset | systemctl daemon-reload  # noqa no-handler
   systemd_service:
@@ -306,10 +294,6 @@
     - /var/lib/kubelet
     - "{{ containerd_storage_dir }}"
     - "{{ ansible_env.HOME | default('/root') }}/.kube"
-    - "{{ ansible_env.HOME | default('/root') }}/.helm"
-    - "{{ ansible_env.HOME | default('/root') }}/.config/helm"
-    - "{{ ansible_env.HOME | default('/root') }}/.cache/helm"
-    - "{{ ansible_env.HOME | default('/root') }}/.local/share/helm"
     - "{{ etcd_data_dir }}"
     - "{{ etcd_events_data_dir }}"
     - "{{ etcd_config_dir }}"
@@ -337,7 +321,6 @@
     - /etc/pki/ca-trust/source/anchors/kube-ca.crt
     - /var/log/pods/
     - "{{ bin_dir }}/kubelet"
-    - "{{ bin_dir }}/cri-dockerd"
     - "{{ bin_dir }}/etcd-scripts"
     - "{{ bin_dir }}/etcd"
     - "{{ bin_dir }}/etcd-events"
@@ -346,7 +329,6 @@
     - "{{ bin_dir }}/kubernetes-scripts"
     - "{{ bin_dir }}/kubectl"
     - "{{ bin_dir }}/kubeadm"
-    - "{{ bin_dir }}/helm"
     - "{{ bin_dir }}/calicoctl"
     - "{{ bin_dir }}/calicoctl.sh"
     - "{{ bin_dir }}/calico-upgrade"
@@ -358,7 +340,6 @@
     - /etc/openvswitch
     - /run/openvswitch
     - /var/lib/calico
-    - /etc/cilium
     - /run/calico
     - /etc/bash_completion.d/kubectl.sh
     - /etc/bash_completion.d/crictl
@@ -412,7 +393,7 @@
     name: "network_plugin/{{ kube_network_plugin }}"
     tasks_from: reset
   when:
-    - kube_network_plugin in ['cilium', 'calico']
+    - kube_network_plugin in ['calico']
   tags:
     - network
 

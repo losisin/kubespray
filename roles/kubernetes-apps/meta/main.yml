@@ -6,12 +6,6 @@ dependencies:
     when:
       - inventory_hostname == groups['kube_control_plane'][0]
 
-  - role: kubernetes-apps/helm
-    when:
-      - helm_enabled
-    tags:
-      - helm
-
   - role: kubernetes-apps/metrics_server
     when:
       - metrics_server_enabled

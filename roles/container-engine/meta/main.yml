@@ -12,10 +12,3 @@ dependencies:
     tags:
       - container-engine
       - containerd
-
-  - role: container-engine/cri-dockerd
-    when:
-      - container_manager == 'docker'
-    tags:
-      - container-engine
-      - docker

@@ -23,8 +23,8 @@
 - name: Trust etcd CA on nodes if needed
   include_tasks: upd_ca_trust.yml
   when:
-    - kube_network_plugin in ["calico", "cilium"] or cilium_deploy_additionally
-    - kube_network_plugin != "calico" or calico_datastore == "etcd"
+    - kube_network_plugin == "calico"
+    - calico_datastore == "etcd"
     - ('k8s_cluster' in group_names)
   tags:
     - etcd-secrets
@@ -35,8 +35,8 @@
   changed_when: false
   check_mode: false
   when:
-    - kube_network_plugin in ["calico", "cilium"] or cilium_deploy_additionally
-    - kube_network_plugin != "calico" or calico_datastore == "etcd"
+    - kube_network_plugin == "calico"
+    - calico_datastore == "etcd"
     - ('k8s_cluster' in group_names)
   tags:
     - control-plane
@@ -46,8 +46,8 @@
   set_fact:
     etcd_client_cert_serial: "{{ etcd_client_cert_serial_result.stdout.split('=')[1] }}"
   when:
-    - kube_network_plugin in ["calico", "cilium"] or cilium_deploy_additionally
-    - kube_network_plugin != "calico" or calico_datastore == "etcd"
+    - kube_network_plugin == "calico"
+    - calico_datastore == "etcd"
     - ('k8s_cluster' in group_names)
   tags:
     - control-plane

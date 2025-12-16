@@ -77,10 +77,6 @@ image_arch: "{{ host_architecture | default('amd64') }}"
 # Versions
 runc_version: "{{ (runc_checksums['amd64'] | dict2items)[0].key }}"
 containerd_version: "{{ (containerd_archive_checksums['amd64'] | dict2items)[0].key }}"
-cri_dockerd_version: "{{ (cri_dockerd_archive_checksums['amd64'] | dict2items)[0].key }}"
-
-# this is relevant when container_manager == 'docker'
-docker_containerd_version: 1.6.32
 
 # gcr and kubernetes image repo define
 gcr_image_repo: "gcr.io"
@@ -109,11 +105,6 @@ calico_apiserver_enabled: false
 
 cni_version: "{{ (cni_binary_checksums['amd64'] | dict2items)[0].key }}"
 
-cilium_version: "1.18.4"
-cilium_cli_version: "{{ (ciliumcli_binary_checksums['amd64'] | dict2items)[0].key }}"
-cilium_enable_hubble: false
-
-helm_version: "{{ (helm_archive_checksums['amd64'] | dict2items)[0].key }}"
 nerdctl_version: "{{ (nerdctl_archive_checksums['amd64'] | dict2items)[0].key }}"
 
 pod_infra_version: "{{ pod_infra_supported_versions[kube_major_version] }}"
@@ -135,7 +126,6 @@ prometheus_operator_crds_version: "{{ (prometheus_operator_crds_checksums.no_arc
 github_url: https://github.com
 dl_k8s_io_url: https://dl.k8s.io
 storage_googleapis_url: https://storage.googleapis.com
-get_helm_url: https://get.helm.sh
 
 # Download URLs
 kubelet_download_url: "{{ dl_k8s_io_url }}/release/v{{ kube_version }}/bin/linux/{{ image_arch }}/kubelet"
@@ -145,13 +135,10 @@ etcd_download_url: "{{ github_url }}/etcd-io/etcd/releases/download/v{{ etcd_ver
 cni_download_url: "{{ github_url }}/containernetworking/plugins/releases/download/v{{ cni_version }}/cni-plugins-linux-{{ image_arch }}-v{{ cni_version }}.tgz"
 calicoctl_download_url: "{{ github_url }}/projectcalico/calico/releases/download/v{{ calico_ctl_version }}/calicoctl-linux-{{ image_arch }}"
 calico_crds_download_url: "{{ github_url }}/projectcalico/calico/archive/v{{ calico_version }}.tar.gz"
-ciliumcli_download_url: "{{ github_url }}/cilium/cilium-cli/releases/download/v{{ cilium_cli_version }}/cilium-linux-{{ image_arch }}.tar.gz"
 crictl_download_url: "{{ github_url }}/kubernetes-sigs/cri-tools/releases/download/v{{ crictl_version }}/crictl-v{{ crictl_version }}-{{ ansible_system | lower }}-{{ image_arch }}.tar.gz"
-helm_download_url: "{{ get_helm_url }}/helm-v{{ helm_version }}-linux-{{ image_arch }}.tar.gz"
 runc_download_url: "{{ github_url }}/opencontainers/runc/releases/download/v{{ runc_version }}/runc.{{ image_arch }}"
 nerdctl_download_url: "{{ github_url }}/containerd/nerdctl/releases/download/v{{ nerdctl_version }}/nerdctl-{{ nerdctl_version }}-{{ ansible_system | lower }}-{{ image_arch }}.tar.gz"
 containerd_download_url: "{{ github_url }}/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ 'static-' if containerd_static_binary }}{{ containerd_version }}-linux-{{ image_arch }}.tar.gz"
-cri_dockerd_download_url: "{{ github_url }}/Mirantis/cri-dockerd/releases/download/v{{ cri_dockerd_version }}/cri-dockerd-{{ cri_dockerd_version }}.{{ image_arch }}.tgz"
 gateway_api_crds_download_url: "{{ github_url }}/kubernetes-sigs/gateway-api/releases/download/v{{ gateway_api_version }}/{{ gateway_api_channel }}-install.yaml"
 prometheus_operator_crds_download_url: "{{ github_url }}/prometheus-operator/prometheus-operator/releases/download/v{{ prometheus_operator_crds_version }}/stripped-down-crds.yaml"
 
@@ -161,10 +148,7 @@ kubelet_binary_checksum: "{{ kubelet_checksums[image_arch][kube_version] }}"
 kubectl_binary_checksum: "{{ kubectl_checksums[image_arch][kube_version] }}"
 kubeadm_binary_checksum: "{{ kubeadm_checksums[image_arch][kube_version] }}"
 calicoctl_binary_checksum: "{{ calicoctl_binary_checksums[image_arch][calico_ctl_version] }}"
-ciliumcli_binary_checksum: "{{ ciliumcli_binary_checksums[image_arch][cilium_cli_version] }}"
 crictl_binary_checksum: "{{ crictl_checksums[image_arch][crictl_version] }}"
-cri_dockerd_archive_checksum: "{{ cri_dockerd_archive_checksums[image_arch][cri_dockerd_version] }}"
-helm_archive_checksum: "{{ helm_archive_checksums[image_arch][helm_version] }}"
 runc_binary_checksum: "{{ runc_checksums[image_arch][runc_version] }}"
 nerdctl_archive_checksum: "{{ nerdctl_archive_checksums[image_arch][nerdctl_version] }}"
 containerd_archive_checksum: "{{ containerd_archive_checksums[image_arch][containerd_version] }}"
@@ -200,20 +184,6 @@ netcheck_agent_image_tag: "v{{ netcheck_version }}"
 netcheck_server_image_repo: "{{ docker_image_repo }}/mirantis/k8s-netchecker-server"
 netcheck_server_image_tag: "v{{ netcheck_version }}"
 netcheck_etcd_image_tag: "{{ etcd_image_tag }}"
-cilium_image_repo: "{{ quay_image_repo }}/cilium/cilium"
-cilium_image_tag: "v{{ cilium_version }}"
-cilium_operator_image_repo: "{{ quay_image_repo }}/cilium/operator"
-cilium_operator_image_tag: "v{{ cilium_version }}"
-cilium_hubble_relay_image_repo: "{{ quay_image_repo }}/cilium/hubble-relay"
-cilium_hubble_relay_image_tag: "v{{ cilium_version }}"
-cilium_hubble_certgen_image_repo: "{{ quay_image_repo }}/cilium/certgen"
-cilium_hubble_certgen_image_tag: "v0.2.4"
-cilium_hubble_ui_image_repo: "{{ quay_image_repo }}/cilium/hubble-ui"
-cilium_hubble_ui_image_tag: "v0.13.3"
-cilium_hubble_ui_backend_image_repo: "{{ quay_image_repo }}/cilium/hubble-ui-backend"
-cilium_hubble_ui_backend_image_tag: "v0.13.3"
-cilium_hubble_envoy_image_repo: "{{ quay_image_repo }}/cilium/cilium-envoy"
-cilium_hubble_envoy_image_tag: "v1.34.10-1762597008-ff7ae7d623be00078865cff1b0672cc5d9bfc6d5"
 
 kube_vip_image_repo: "{{ github_image_repo }}/kube-vip/kube-vip{{ '-iptables' if kube_vip_lb_fwdmethod == 'masquerade' else '' }}"
 kube_vip_image_tag: v0.8.9
@@ -279,11 +249,6 @@ snapshot_controller_supported_versions:
   '1.32': "v7.0.2"
 snapshot_controller_image_repo: "{{ kube_image_repo }}/sig-storage/snapshot-controller"
 snapshot_controller_image_tag: "{{ snapshot_controller_supported_versions[kube_major_version] }}"
-
-dashboard_image_repo: "{{ docker_image_repo }}/kubernetesui/dashboard"
-dashboard_image_tag: "v2.7.0"
-dashboard_metrics_scraper_repo: "{{ docker_image_repo }}/kubernetesui/metrics-scraper"
-dashboard_metrics_scraper_tag: "v1.0.8"
 
 node_feature_discovery_version: 0.16.4
 node_feature_discovery_image_repo: "{{ kube_image_repo }}/nfd/node-feature-discovery"
@@ -385,20 +350,6 @@ downloads:
     groups:
       - k8s_cluster
 
-  cri_dockerd:
-    file: true
-    enabled: "{{ container_manager == 'docker' }}"
-    dest: "{{ local_release_dir }}/cri-dockerd-{{ cri_dockerd_version }}.{{ image_arch }}.tar.gz"
-    checksum: "{{ cri_dockerd_archive_checksum }}"
-    url: "{{ cri_dockerd_download_url }}"
-    unarchive: true
-    unarchive_extra_opts:
-      - --strip=1
-    owner: "root"
-    mode: "0755"
-    groups:
-      - k8s_cluster
-
   runc:
     file: true
     enabled: "{{ container_manager == 'containerd' }}"
@@ -429,81 +380,6 @@ downloads:
     dest: "{{ local_release_dir }}/nerdctl-{{ nerdctl_version }}-linux-{{ image_arch }}.tar.gz"
     checksum: "{{ nerdctl_archive_checksum }}"
     url: "{{ nerdctl_download_url }}"
-    unarchive: true
-    owner: "root"
-    mode: "0755"
-    groups:
-      - k8s_cluster
-
-  cilium:
-    enabled: "{{ kube_network_plugin == 'cilium' or cilium_deploy_additionally }}"
-    container: true
-    repo: "{{ cilium_image_repo }}"
-    tag: "{{ cilium_image_tag }}"
-    checksum: "{{ cilium_digest_checksum | default(None) }}"
-    groups:
-      - k8s_cluster
-
-  cilium_operator:
-    enabled: "{{ kube_network_plugin == 'cilium' or cilium_deploy_additionally }}"
-    container: true
-    repo: "{{ cilium_operator_image_repo }}"
-    tag: "{{ cilium_operator_image_tag }}"
-    checksum: "{{ cilium_operator_digest_checksum | default(None) }}"
-    groups:
-      - k8s_cluster
-
-  cilium_hubble_relay:
-    enabled: "{{ cilium_enable_hubble }}"
-    container: true
-    repo: "{{ cilium_hubble_relay_image_repo }}"
-    tag: "{{ cilium_hubble_relay_image_tag }}"
-    checksum: "{{ cilium_hubble_relay_digest_checksum | default(None) }}"
-    groups:
-      - k8s_cluster
-
-  cilium_hubble_certgen:
-    enabled: "{{ cilium_enable_hubble }}"
-    container: true
-    repo: "{{ cilium_hubble_certgen_image_repo }}"
-    tag: "{{ cilium_hubble_certgen_image_tag }}"
-    checksum: "{{ cilium_hubble_certgen_digest_checksum | default(None) }}"
-    groups:
-      - k8s_cluster
-
-  cilium_hubble_ui:
-    enabled: "{{ cilium_enable_hubble }}"
-    container: true
-    repo: "{{ cilium_hubble_ui_image_repo }}"
-    tag: "{{ cilium_hubble_ui_image_tag }}"
-    checksum: "{{ cilium_hubble_ui_digest_checksum | default(None) }}"
-    groups:
-      - k8s_cluster
-
-  cilium_hubble_ui_backend:
-    enabled: "{{ cilium_enable_hubble }}"
-    container: true
-    repo: "{{ cilium_hubble_ui_backend_image_repo }}"
-    tag: "{{ cilium_hubble_ui_backend_image_tag }}"
-    checksum: "{{ cilium_hubble_ui_backend_digest_checksum | default(None) }}"
-    groups:
-      - k8s_cluster
-
-  cilium_hubble_envoy:
-    enabled: "{{ cilium_enable_hubble }}"
-    container: true
-    repo: "{{ cilium_hubble_envoy_image_repo }}"
-    tag: "{{ cilium_hubble_envoy_image_tag }}"
-    checksum: "{{ cilium_hubble_envoy_digest_checksum | default(None) }}"
-    groups:
-      - k8s_cluster
-
-  ciliumcli:
-    enabled: "{{ kube_network_plugin == 'cilium' or cilium_deploy_additionally }}"
-    file: true
-    dest: "{{ local_release_dir }}/cilium-{{ cilium_cli_version }}-{{ image_arch }}.tar.gz"
-    checksum: "{{ ciliumcli_binary_checksum }}"
-    url: "{{ ciliumcli_download_url }}"
     unarchive: true
     owner: "root"
     mode: "0755"
@@ -646,18 +522,6 @@ downloads:
     groups:
       - kube_control_plane
 
-  helm:
-    enabled: "{{ helm_enabled }}"
-    file: true
-    dest: "{{ local_release_dir }}/helm-{{ helm_version }}/helm-{{ helm_version }}-linux-{{ image_arch }}.tar.gz"
-    checksum: "{{ helm_archive_checksum }}"
-    url: "{{ helm_download_url }}"
-    unarchive: true
-    owner: "root"
-    mode: "0755"
-    groups:
-      - kube_control_plane
-
   metrics_server:
     enabled: "{{ metrics_server_enabled }}"
     container: true
@@ -708,24 +572,6 @@ downloads:
     checksum: "{{ snapshot_controller_digest_checksum | default(None) }}"
     groups:
       - kube_node
-
-  dashboard:
-    enabled: "{{ dashboard_enabled }}"
-    container: true
-    repo: "{{ dashboard_image_repo }}"
-    tag: "{{ dashboard_image_tag }}"
-    checksum: "{{ dashboard_digest_checksum | default(None) }}"
-    groups:
-      - kube_control_plane
-
-  dashboard_metrics_scrapper:
-    enabled: "{{ dashboard_enabled }}"
-    container: true
-    repo: "{{ dashboard_metrics_scraper_repo }}"
-    tag: "{{ dashboard_metrics_scraper_tag }}"
-    checksum: "{{ dashboard_digest_checksum | default(None) }}"
-    groups:
-      - kube_control_plane
 
 download_defaults:
   container: false

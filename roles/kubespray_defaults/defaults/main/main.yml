@@ -49,9 +49,7 @@ kube_reserved_cgroups_for_service_slice: kube.slice
 ## 'addon/kube-proxy' gets skipped for some network plugins
 kubeadm_init_phases_skip_default: [ "addon/coredns" ]
 kubeadm_init_phases_skip: >-
-  {%- if kube_network_plugin == 'cilium' and (cilium_kube_proxy_replacement is defined and (cilium_kube_proxy_replacement == 'strict' or (cilium_kube_proxy_replacement | bool) or (cilium_kube_proxy_replacement | string | lower == 'true') )) -%}
-  {{ kubeadm_init_phases_skip_default + ["addon/kube-proxy"] }}
-  {%- elif kube_network_plugin == 'calico' and (calico_bpf_enabled is defined and calico_bpf_enabled) -%}
+  {%- if kube_network_plugin == 'calico' and (calico_bpf_enabled is defined and calico_bpf_enabled) -%}
   {{ kubeadm_init_phases_skip_default + ["addon/kube-proxy"] }}
   {%- elif kube_proxy_remove is defined and kube_proxy_remove -%}
   {{ kubeadm_init_phases_skip_default + ["addon/kube-proxy"] }}
@@ -213,11 +211,6 @@ kube_log_level: 2
 kube_network_plugin: calico
 
 ## Network plugin options with dependencies across the whole playbook
-
-# Deploy cilium even if kube_network_plugin is not cilium.
-# This enables to deploy cilium alongside another CNI to replace kube-proxy.
-cilium_deploy_additionally: false
-
 # Determines if calico_rr group exists
 peer_with_calico_rr: "{{ 'calico_rr' in groups and groups['calico_rr'] | length > 0 }}"
 
@@ -323,12 +316,7 @@ runc_enabled: false
 container_manager_on_localhost: "{{ container_manager }}"
 
 # CRI socket path
-cri_socket: >-
-  {%- if container_manager == 'containerd' -%}
-  unix:///var/run/containerd/containerd.sock
-  {%- elif container_manager == 'docker' -%}
-  unix:///var/run/cri-dockerd.sock
-  {%- endif -%}
+cri_socket: "unix:///var/run/containerd/containerd.sock"
 
 ## Uncomment this if you want to force overlay/overlay2 as docker storage driver
 ## Please note that overlay2 is only supported on newer kernels
@@ -403,12 +391,7 @@ credentials_dir: "{{ inventory_dir }}/credentials"
 # K8s image pull policy (imagePullPolicy)
 k8s_image_pull_policy: IfNotPresent
 
-# Kubernetes dashboard
-# RBAC required. see docs/getting-started.md for access details.
-dashboard_enabled: false
-
 # Addons which can be enabled
-helm_enabled: false
 metrics_server_enabled: false
 enable_network_policy: true
 csi_snapshot_controller_enabled: false
