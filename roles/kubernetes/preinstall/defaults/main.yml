@@ -78,30 +78,8 @@ ntp_timezone: ""
 
 # Currently known os distributions
 supported_os_distributions:
-  - 'RedHat'
-  - 'CentOS'
-  - 'Fedora'
   - 'Ubuntu'
   - 'Debian'
-  - 'Flatcar'
-  - 'Flatcar Container Linux by Kinvolk'
-  - 'Suse'
-  - 'openSUSE Leap'
-  - 'openSUSE Tumbleweed'
-  - 'ClearLinux'
-  - 'OracleLinux'
-  - 'AlmaLinux'
-  - 'Rocky'
-  - 'Amazon'
-  - 'Kylin Linux Advanced Server'
-  - 'UnionTech'
-  - 'UniontechOS'
-  - 'openEuler'
-
-# Extending some distributions into the redhat os family
-redhat_os_family_extensions:
-  - "UnionTech"
-  - "UniontechOS"
 
 # Sets DNSStubListener=no, useful if you get "0.0.0.0:53: bind: address already in use"
 systemd_resolved_disable_stub_listener: "{{ ansible_os_family in ['Flatcar', 'Flatcar Container Linux by Kinvolk'] }}"

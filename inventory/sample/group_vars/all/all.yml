@@ -45,6 +45,10 @@ loadbalancer_apiserver_healthcheck_port: 8081
 # https_proxy: ""
 # https_proxy_cert_file: ""
 
+# Cloud Provider
+# This variable can only be set to "external" or empty string, otherwise the check will fail.
+cloud_provider: ""
+
 ## Refer to roles/kubespray_defaults/defaults/main/main.yml before modifying no_proxy
 # no_proxy: ""
 

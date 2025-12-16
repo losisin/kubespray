@@ -89,11 +89,6 @@ kube_proxy_nodeport_addresses: >-
 # Set to true to allow pre-checks to fail and continue deployment
 ignore_assert_errors: false
 
-# kube-vip
-kube_vip_enabled: false
-kube_vip_lb_fwdmethod: local
-kube_vip_address:
-
 # nginx-proxy configure
 nginx_config_dir: "/etc/nginx"
 
@@ -395,9 +390,6 @@ k8s_image_pull_policy: IfNotPresent
 metrics_server_enabled: false
 enable_network_policy: true
 csi_snapshot_controller_enabled: false
-ingress_nginx_enabled: false
-gateway_api_enabled: false
-prometheus_operator_crds_enabled: false
 
 ## List of authorization modes that must be configured for
 ## the k8s cluster. Only 'AlwaysAllow', 'AlwaysDeny', 'Node' and
@@ -508,12 +500,7 @@ local_volume_provisioner_storage_classes: |
 
 ssl_ca_dirs: |-
   [
-  {% if ansible_os_family in ['Flatcar', 'Flatcar Container Linux by Kinvolk'] -%}
-  '/usr/share/ca-certificates',
-  {% elif ansible_os_family == 'RedHat' -%}
-  '/etc/pki/tls',
-  '/etc/pki/ca-trust',
-  {% elif ansible_os_family == 'Debian' -%}
+  {% if ansible_os_family == 'Debian' -%}
   '/usr/share/ca-certificates',
   {% endif -%}
   ]
@@ -668,9 +655,6 @@ sysctl_ignore_unknown_keys: false
 system_upgrade: false
 system_upgrade_reboot: on-upgrade  # never, always
 
-# Enables or disables the scheduler plugins.
-scheduler_plugins_enabled: false
-
 ## NTP Settings
 # Start the ntpd or chrony service and enable it at system boot.
 ntp_enabled: false
@@ -681,9 +665,4 @@ ntp_enabled: false
 # The package to install which provides NTP functionality.
 # The default is ntp for most platforms, or chrony on RHEL/CentOS 7 and later.
 # The ntp_package can be one of ['ntp', 'ntpsec', 'chrony']
-ntp_package: >-
-      {% if ansible_os_family == "RedHat" -%}
-      chrony
-      {%- else -%}
-      ntp
-      {%- endif -%}
+ntp_package: "ntp"

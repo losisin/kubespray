@@ -5,27 +5,6 @@
       - distribution
       - pkg_mgr
 
-- name: Update package management cache (zypper) - SUSE
-  command: zypper -n --gpg-auto-import-keys ref
-  register: make_cache_output
-  until: make_cache_output is succeeded
-  retries: 4
-  delay: "{{ retry_stagger | random + 3 }}"
-  when:
-    - ansible_pkg_mgr == 'zypper'
-  tags: bootstrap_os
-
-- name: Install epel-release on RHEL derivatives
-  package:
-    name: epel-release
-    state: present
-  when:
-    - ansible_os_family == "RedHat"
-    - not is_fedora_coreos
-    - epel_enabled | bool
-  tags:
-    - bootstrap_os
-
 - name: Manage packages
   package:
     name: "{{ item.packages | dict2items | selectattr('value', 'ansible.builtin.all') | map(attribute='key') }}"

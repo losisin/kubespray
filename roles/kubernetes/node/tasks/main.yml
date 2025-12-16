@@ -16,14 +16,6 @@
   tags:
     - kubelet
 
-- name: Install kube-vip
-  import_tasks: loadbalancer/kube-vip.yml
-  when:
-    - ('kube_control_plane' in group_names)
-    - kube_vip_enabled
-  tags:
-    - kube-vip
-
 - name: Install nginx-proxy
   import_tasks: loadbalancer/nginx-proxy.yml
   when:

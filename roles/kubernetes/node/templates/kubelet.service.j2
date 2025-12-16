@@ -2,9 +2,6 @@
 Description=Kubernetes Kubelet Server
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 After={{ container_manager }}.service
-{% if container_manager == 'docker' %}
-Wants=docker.socket
-{% else %}
 Wants={{ container_manager }}.service
 {% endif %}
 {% for kubelet_dependency in kubelet_systemd_wants_dependencies|default([]) %}

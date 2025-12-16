@@ -102,24 +102,8 @@ containerd_limit_mem_lock: "infinity"
 
 # OS distributions that already support containerd
 containerd_supported_distributions:
-  - "CentOS"
-  - "OracleLinux"
-  - "RedHat"
   - "Ubuntu"
   - "Debian"
-  - "Fedora"
-  - "AlmaLinux"
-  - "Rocky"
-  - "Amazon"
-  - "Flatcar"
-  - "Flatcar Container Linux by Kinvolk"
-  - "Suse"
-  - "openSUSE Leap"
-  - "openSUSE Tumbleweed"
-  - "Kylin Linux Advanced Server"
-  - "UnionTech"
-  - "UniontechOS"
-  - "openEuler"
 
 # Enable container device interface
 enable_cdi: false

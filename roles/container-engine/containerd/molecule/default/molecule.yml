@@ -9,22 +9,6 @@ platforms:
       - kube_control_plane
       - kube_node
       - k8s_cluster
-  - cloud_image: debian-12
-    name: debian12
-    vm_cpu_cores: 1
-    vm_memory: 1024
-    node_groups:
-      - kube_control_plane
-      - kube_node
-      - k8s_cluster
-  - cloud_image: almalinux-9
-    name: almalinux9
-    vm_cpu_cores: 1
-    vm_memory: 1024
-    node_groups:
-      - kube_control_plane
-      - kube_node
-      - k8s_cluster
 provisioner:
   name: ansible
   env:

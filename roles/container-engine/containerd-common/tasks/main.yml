@@ -24,8 +24,6 @@
         - "{{ ansible_os_family | lower }}-{{ host_architecture }}.yml"
         - "{{ ansible_os_family | lower }}.yml"
         - defaults.yml
-      paths:
-        - ../vars
       skip: true
   tags:
     - facts

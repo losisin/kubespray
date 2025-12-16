@@ -1,27 +1,4 @@
 ---
-# Todo : selinux configuration
-- name: Confirm selinux deployed
-  stat:
-    path: /etc/selinux/config
-    get_attributes: false
-    get_checksum: false
-    get_mime: false
-  when:
-    - ansible_os_family == "RedHat"
-    - "'Amazon' not in ansible_distribution"
-  register: slc
-
-- name: Set selinux policy
-  ansible.posix.selinux:
-    policy: targeted
-    state: "{{ preinstall_selinux_state }}"
-  when:
-    - ansible_os_family == "RedHat"
-    - "'Amazon' not in ansible_distribution"
-    - slc.stat.exists
-  tags:
-    - bootstrap_os
-
 - name: Disable IPv6 DNS lookup
   lineinfile:
     dest: /etc/gai.conf

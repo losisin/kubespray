@@ -47,7 +47,7 @@
     gather_subset: '!all'
     filter: ansible_*
 
-- name: Assign inventory name to unconfigured hostnames (non-CoreOS, non-Flatcar, Suse and ClearLinux, non-Fedora)
+- name: Assign inventory name to unconfigured hostnames
   hostname:
     name: "{{ inventory_hostname }}"
   when: override_system_hostname
