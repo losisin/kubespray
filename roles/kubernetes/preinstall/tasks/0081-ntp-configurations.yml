@@ -71,8 +71,6 @@
     state: present
   when:
     - ntp_timezone
-    - not is_fedora_coreos
-    - not ansible_os_family in ["Flatcar", "Flatcar Container Linux by Kinvolk"]
 
 - name: Set timezone
   community.general.timezone:

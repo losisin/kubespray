@@ -3,7 +3,6 @@ extends: default
 
 ignore: |
   .git/
-  .github/
   # Generated file
 # https://ansible.readthedocs.io/projects/lint/rules/yaml/
 rules:

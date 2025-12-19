@@ -1,20 +1,4 @@
 ---
-- name: Validate-container-engine | check if fedora coreos
-  stat:
-    path: /run/ostree-booted
-    get_attributes: false
-    get_checksum: false
-    get_mime: false
-  register: ostree
-  tags:
-    - facts
-
-- name: Validate-container-engine | set is_ostree
-  set_fact:
-    is_ostree: "{{ ostree.stat.exists }}"
-  tags:
-    - facts
-
 - name: Ensure kubelet systemd unit exists
   stat:
     path: "/etc/systemd/system/kubelet.service"
@@ -46,9 +30,7 @@
   vars:
     service_name: containerd.service
   when:
-    - not (is_ostree or (ansible_distribution == "Flatcar Container Linux by Kinvolk") or (ansible_distribution == "Flatcar"))
     - container_manager != "containerd"
-    - docker_installed.matched == 0
     - containerd_installed.matched > 0
     - ansible_facts.services[service_name]['state'] == 'running'
   block:
@@ -57,7 +39,7 @@
         name: remove_node/pre_remove
         apply:
           tags:
-            - pre-remove
+            - pre_remove
       when: kubelet_systemd_unit_exists.stat.exists
     - name: Stop kubelet
       service:

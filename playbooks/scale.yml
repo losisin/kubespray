@@ -36,8 +36,8 @@
       vars:
         etcd_cluster_setup: false
       when:
-        - kube_network_plugin in ["calico"] | default(false) | bool
-        - kube_network_plugin != "calico" or calico_datastore == "etcd"
+        - kube_network_plugin in ["calico"]
+        - calico_datastore == "etcd"
 
 - name: Target only workers to get kubelet installed and checking in on any new nodes(node)
   hosts: kube_node

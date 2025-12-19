@@ -3,7 +3,6 @@ Description=Kubernetes Kubelet Server
 Documentation=https://github.com/GoogleCloudPlatform/kubernetes
 After={{ container_manager }}.service
 Wants={{ container_manager }}.service
-{% endif %}
 {% for kubelet_dependency in kubelet_systemd_wants_dependencies|default([]) %}
 {% if kubelet_dependency|length > 0 %}
 Wants={{ kubelet_dependency }}

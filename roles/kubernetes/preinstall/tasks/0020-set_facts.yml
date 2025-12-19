@@ -78,7 +78,6 @@
       {%- if resolvconf | bool -%}/etc/resolvconf/resolv.conf.d/base{%- endif -%}
     head: >-
       {%- if resolvconf | bool -%}/etc/resolvconf/resolv.conf.d/head{%- endif -%}
-  when: not ansible_os_family in ["Flatcar", "Flatcar Container Linux by Kinvolk"] and not is_fedora_coreos
 
 - name: Check if /etc/dhclient.conf exists
   stat:
@@ -109,7 +108,6 @@
 - name: Target dhclient hook file for Debian family
   set_fact:
     dhclienthookfile: /etc/dhcp/dhclient-exit-hooks.d/zdnsupdate
-  when: ansible_os_family == "Debian"
 
 - name: Check /usr readonly
   stat:

@@ -1,21 +1,5 @@
 ---
-- name: Runc | check if fedora coreos
-  stat:
-    path: /run/ostree-booted
-    get_attributes: false
-    get_checksum: false
-    get_mime: false
-  register: ostree
-
-- name: Runc | set is_ostree
-  set_fact:
-    is_ostree: "{{ ostree.stat.exists }}"
-
 - name: Runc | Uninstall runc package managed by package manager
-  when:
-    - not is_ostree
-    - ansible_distribution != "Flatcar Container Linux by Kinvolk"
-    - ansible_distribution != "Flatcar"
   block:
     - name: Runc | Remove package
       package:

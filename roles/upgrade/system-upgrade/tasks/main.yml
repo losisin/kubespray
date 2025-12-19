@@ -2,7 +2,6 @@
 - name: APT upgrade
   when:
   - system_upgrade
-  - ansible_os_family == "Debian"
   include_tasks: apt.yml
   tags:
   - system-upgrade-apt
